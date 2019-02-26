@@ -1,10 +1,9 @@
-# Zomato Proto Generator Docker
-This docker compiles .proto into required languages compiled source code definations and then you can use special generated source code to easily write and read your structured data to and from a variety of data streams.
+# Proto Generator
+protoc-gen compiles .proto into language specific clients, supports gRPC.
 
 ## ENV
-
-* GRPC_VERSION - Specify the version of grpc to use.
-* PROTOBUF_VERSION - Specify the version of protobuf to use.
+* GRPC_VERSION - the version of grpc to use.
+* PROTOBUF_VERSION - the version of protobuf to use.
 
 ## MISC
 - Protobuf installed with grpc is replaced with the version installed according to our env PROTOBUF_VERSION.
@@ -12,12 +11,13 @@ This docker compiles .proto into required languages compiled source code definat
 
 
 ## USAGE 
-After the image has been built, assuming with `protogen-img` tag. Ex
+After the image has been built (assuming `protoc-gen` image name):
 
 For Go
 ```
 docker run --rm -v $(pwd):$(pwd) -w $(pwd) protogen-img --go_out=. -I. ./proto/$(dir)/*.proto)
 ```
+
 For PHP
 ```
 docker run --rm -v $(pwd):$(pwd) -w $(pwd) protogen-img --php_out=client -I. ./proto/$(dir)/*.proto)
