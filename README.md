@@ -23,10 +23,10 @@ After the image has been built (assuming `protoc-gen` image name):
 
 For Go
 ```
-docker run --rm -v $(pwd):$(pwd) -w $(pwd) protoc-gen:v1.0 --go_out=. -I. ./proto/*.proto)
+docker run --rm -v $(pwd):$(pwd) -w $(pwd) protoc-gen:v2.0 --go_out=. -I. ./proto/*.proto)
 ```
 
 For PHP
 ```
-docker run --rm -v $(pwd):$(pwd) -w $(pwd) protoc-gen:v1.0 --php_out=./client/php/src --grpc_out=./client/php/src --plugin=protoc-gen-grpc=/usr/bin/grpc_php_plugin -I. ./proto/*.proto)
+docker run --rm -v $(pwd):$(pwd) -w $(pwd) protoc-gen:v2.0 --php_out=./client/php/src --grpc_out=./client/php/src --plugin=protoc-gen-grpc=/usr/bin/grpc_php_plugin -I. ./proto/*.proto)
 ```
