@@ -3,7 +3,8 @@ RUN apk add --no-cache build-base curl automake autoconf libtool git zlib-dev
 
 ENV GRPC_VERSION=1.16.0 \
         PROTOBUF_VERSION=3.6.1 \
-        OUTDIR=/out
+        OUTDIR=/out \
+        PROTOC_GEN_GO_VERSION=1.3.1
 RUN mkdir -p /protobuf && \
         curl -L https://github.com/google/protobuf/archive/v${PROTOBUF_VERSION}.tar.gz | tar xvz --strip-components=1 -C /protobuf
 RUN git clone --depth 1 --recursive -b v${GRPC_VERSION} https://github.com/grpc/grpc.git /grpc && \
@@ -25,9 +26,11 @@ RUN apk add --no-cache go
 ENV GOPATH=/go \
         PATH=/go/bin/:$PATH
 
-RUN go get -u -v -ldflags '-w -s' \
-    github.com/golang/protobuf/protoc-gen-go \
-    && install -c ${GOPATH}/bin/protoc-gen* ${OUTDIR}/usr/bin/
+RUN mkdir -p ${GOPATH}/src/github.com/golang/protobuf && \
+    curl -sSL https://github.com/golang/protobuf/archive/v${PROTOC_GEN_GO_VERSION}.tar.gz | tar -xz --strip 1 -C ${GOPATH}/src/github.com/golang/protobuf &&\
+    cd ${GOPATH}/src/github.com/golang/protobuf && \
+    go build -ldflags '-w -s' -o /golang-protobuf-out/protoc-gen-go ./protoc-gen-go && \
+    install -Ds /golang-protobuf-out/protoc-gen-go ${OUTDIR}/usr/bin/
 
 FROM znly/upx as packer
 COPY --from=protoc_builder /out/ /out/

@@ -12,6 +12,7 @@ $ make build
 ## ENV
 * GRPC_VERSION - the version of grpc to use.
 * PROTOBUF_VERSION - the version of protobuf to use.
+* PROTOC_GEN_GO_VERSION - the version of protoc-gen-go to use.
 
 ## MISC
 - Protobuf installed with grpc is replaced with the version installed according to our env PROTOBUF_VERSION.
