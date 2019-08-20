@@ -4,7 +4,8 @@ RUN apk add --no-cache build-base curl automake autoconf libtool git zlib-dev
 ENV GRPC_VERSION=1.16.0 \
         PROTOBUF_VERSION=3.6.1 \
         OUTDIR=/out \
-        PROTOC_GEN_GO_VERSION=1.3.1
+        PROTOC_GEN_GO_VERSION=1.3.1 \
+        GRPC_JAVA_VERSION=1.21.0
 RUN mkdir -p /protobuf && \
         curl -L https://github.com/google/protobuf/archive/v${PROTOBUF_VERSION}.tar.gz | tar xvz --strip-components=1 -C /protobuf
 RUN git clone --depth 1 --recursive -b v${GRPC_VERSION} https://github.com/grpc/grpc.git /grpc && \
@@ -31,6 +32,17 @@ RUN mkdir -p ${GOPATH}/src/github.com/golang/protobuf && \
     cd ${GOPATH}/src/github.com/golang/protobuf && \
     go build -ldflags '-w -s' -o /golang-protobuf-out/protoc-gen-go ./protoc-gen-go && \
     install -Ds /golang-protobuf-out/protoc-gen-go ${OUTDIR}/usr/bin/
+
+RUN mkdir -p /grpc-java && \
+    curl -sSL https://github.com/grpc/grpc-java/archive/v${GRPC_JAVA_VERSION}.tar.gz | tar xz --strip 1 -C /grpc-java && \
+    cd /grpc-java && \
+    g++ \
+        -I. -I/protobuf/src \
+        /grpc-java/compiler/src/java_plugin/cpp/*.cpp \
+        -L/protobuf/src/.libs \
+        -lprotoc -lprotobuf -lpthread --std=c++0x -s \
+        -o protoc-gen-grpc-java && \
+    install -Ds protoc-gen-grpc-java ${OUTDIR}/usr/bin/protoc-gen-grpc-java
 
 FROM znly/upx as packer
 COPY --from=protoc_builder /out/ /out/
