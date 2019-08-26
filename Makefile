@@ -4,7 +4,7 @@ AWS_DEFAULT_REGION = ap-southeast-1
 
 build:
 	@echo "Building protoc-gen docker image"
-	docker build -t protoc-gen:v1.1 -f ./Dockerfile .
+	docker build -t protoc-gen:${VERSION_TAG} -f ./Dockerfile .
 
 push:
 	aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email --profile $AWS_PROFILE | sh
