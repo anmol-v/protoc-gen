@@ -6,6 +6,7 @@ RUN apt-get -y update && \
 ENV GRPC_VERSION=1.24.2 \
         OUTDIR=/out \
         PROTOC_GEN_GO_VERSION=1.3.2 \
+        GRPC_GATEWAY_VERSION=1.14.1\
         GRPC_JAVA_VERSION=1.24.0 \
         GO_VERSION=1.13.1 \
         GOROOT=/usr/local/go \
@@ -50,6 +51,16 @@ RUN mkdir -p /grpc-java && \
         -o protoc-gen-grpc-java && \
     install -Ds protoc-gen-grpc-java ${OUTDIR}/usr/bin/protoc-gen-grpc-java
 
+# Install grpc-gateway
+RUN mkdir -p /grpc-gateway && \
+    cd /grpc-gateway && \
+    wget https://github.com/grpc-ecosystem/grpc-gateway/archive/v${GRPC_GATEWAY_VERSION}.tar.gz && \
+    tar --strip 1 -C /grpc-gateway -xvzf *.tar.gz && \
+    cd /grpc-gateway && \
+    go build -ldflags '-w -s' -o /grpc-gateway-out/protoc-gen-grpc-gateway ./protoc-gen-grpc-gateway && \
+    go build -ldflags '-w -s' -o /grpc-gateway-out/protoc-gen-swagger ./protoc-gen-swagger && \
+    install -Ds /grpc-gateway-out/protoc-gen-grpc-gateway ${OUTDIR}/usr/bin/ && \
+    install -Ds /grpc-gateway-out/protoc-gen-swagger ${OUTDIR}/usr/bin/
 
 ########################
 # Build final image
